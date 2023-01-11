@@ -1,0 +1,40 @@
+
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Flask application</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='chat.css')}}">
+        <script>
+            let list = document.getElementById("myList");
+
+            async function autoRefresh() {
+                console.log('ceva');
+                let list = document.getElementById("myList");
+                let li = document.createElement("li");
+                li.innerText = 'item';
+                list.appendChild(li);
+            }
+            setInterval('autoRefresh()', 23000);
+        </script>
+    </head>
+
+    <form  action="{{ url_for('chat') }}" method="post" style="border:1px solid #ccc">
+        <div class="container">
+
+            <label for="username"><b>Send message</b></label>
+            <input type="text" placeholder="message" name="message">
+
+            <label for="psw"><b>User to message</b></label>
+            <input type="text" placeholder="username" name="user">
+
+            <div class="clearfix">
+                <button type="submit" class="signupbtn">Sign In</button>
+            </div>
+        </div>
+    </form>
+
+    <ul id="myList"></ul>
+
+</html>

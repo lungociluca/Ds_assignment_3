@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Flask application</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='chat.css')}}">
+        <script>
+
+        let index_messages = 0;
+        let index_notifications = 0;
+
+        async function autoRefresh() {
+            let endpoint = '/updateChatWindow/';
+            let url = endpoint.concat('{{ sender + '//' + receiver}}');
+            const messages = await fetch(url).then(data => data.text());
+            let array = JSON.parse(messages);
+            let array_messages = array[0];
+            let array_notifications = array[1];
+            let array_seen_messages = array[2];
+
+            if (array_messages.length > index_messages) {
+
+                let list = document.getElementById("messageList");
+
+                for (let i = index_messages; i < array_messages.length; i++) {
+                    let li = document.createElement("li");
+                    li.innerText = array_messages[i];
+                    list.appendChild(li);
+                    index_messages += 1;
+                }
+            }
+
+            if (array_notifications.length > index_notifications) {
+
+                let list = document.getElementById("notificationList");
+
+                for (let i = index_notifications; i < array_notifications.length; i++) {
+                    let li = document.createElement("li");
+                    li.innerText = array_notifications[i];
+                    list.appendChild(li);
+                    index_notifications += 1;
+                }
+            }
+
+            let list = document.getElementById("seenMessagesList");
+            while((lis = list.getElementsByTagName("li")).length > 0) {
+                list.removeChild(lis[0]);
+            }
+
+
+            for (let i = 0; i < array_seen_messages.length; i++) {
+                let li = document.createElement("li");
+                li.innerText = array_seen_messages[i];
+                list.appendChild(li);
+            }
+
+        }
+        setInterval('autoRefresh()', 2000);
+        </script>
+    </head>
+
+
+    <h2 class="center">Chatting with {{ sender }}</h2>
+
+
+    <p>You have conversations with:</p>
+    <h3>
+        <ul id="notificationList"></ul>
+    </h3>
+
+    <p>Seen messages:</p>
+    <ul id="seenMessagesList"></ul>
+
+    <ul class="container darker" id="messageList"></ul>
+
+    <form  action="{{ url_for('chat') }}" method="post" style="border:1px solid #ccc">
+        <div class="container">
+
+            <label for="username"><b>Send message</b></label>
+            <input type="text" placeholder="message" name="message">
+
+            <label for="psw"><b>User to message</b></label>
+            <input type="text" placeholder="username" name="user">
+
+            <div class="clearfix">
+                <button type="submit" class="signupbtn">Send</button>
+            </div>
+        </div>
+    </form>
+    <div class="clearfix">
+        <button type="button" class="signupbtn" onclick="window.location.href='{{ url_for( 'welcome') }}';">Exit</button>
+    </div>
+</html>
